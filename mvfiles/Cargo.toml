@@ -1,0 +1,8 @@
+[package]
+name = "mvfiles"
+version = "0.1.0"
+authors = ["Theo Garefalakis <tgaref@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+common = { path = "../common" }
