@@ -1,5 +1,5 @@
 extern crate clap;
-use clap::{App, Arg, Values};
+use clap::{App, Arg};
 use std::path::Path;
 use std::fs;
 use std::ffi::{OsStr,OsString};
@@ -49,14 +49,14 @@ pub fn parse_arguments() -> Config {
 
     let frm = matches.value_of("from_dir").unwrap();
     let to = matches.value_of("to_dir").unwrap();
-    let ext_values = matches.values_of("extension").unwrap_or(Values::default());
+    let ext_values = matches.values_of("extension").unwrap_or_default();
     let rec = matches.is_present("recur");
     let mut ext_set = HashSet::new();
     for item in ext_values {
         ext_set.insert(OsString::from(item));
     };
 
-    return Config::new(frm.to_string(), to.to_string(), ext_set, rec)
+    Config::new(frm.to_string(), to.to_string(), ext_set, rec)
 }
 
 
