@@ -8,6 +8,5 @@ fn main() {
         println!("There was an error: {}", e);
 
         process::exit(1)
-    }            
+    }
 }
-

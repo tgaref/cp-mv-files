@@ -1,50 +1,58 @@
 extern crate clap;
 use clap::{App, Arg};
-use std::path::Path;
-use std::fs;
-use std::ffi::{OsStr,OsString};
-use std::io::{self, Result};
 use std::collections::HashSet;
+use std::ffi::{OsStr, OsString};
+use std::fs;
+use std::io::{self, Result};
+use std::path::Path;
 
-#[derive (Debug)]
+#[derive(Debug)]
 pub struct Config {
-    src  : String,
-    dst  : String,
-    ext  : HashSet<OsString>,
-    rec  : bool,
+    src: String,
+    dst: String,
+    ext: HashSet<OsString>,
+    rec: bool,
 }
 
 impl Config {
     pub fn new(src: String, dst: String, ext: HashSet<OsString>, rec: bool) -> Config {
-        Config {src, dst, ext, rec}
+        Config { src, dst, ext, rec }
     }
 }
 
 pub fn parse_arguments() -> Config {
-        let matches = App::new("My Copy Program")
+    let matches = App::new("My Copy Program")
         .version("0.1")
         .author("Theo G. <tgaref@gmail.com>")
         .about("Copies files with given extensions (recursively)")
-        .arg(Arg::with_name("from_dir")
-             .help("Sets a source dir")
-             .required(true)
-             .index(1))
-        .arg(Arg::with_name("to_dir")
-             .help("Sets target dir")
-             .required(true)
-             .index(2))
-        .arg(Arg::with_name("extension")
-             .short("x")
-             .long("ext")
-             .multiple(true)
-             .required(false)
-             .value_name("EXT")
-             .help("Sets the extension(s) of files to copy"))
-        .arg(Arg::with_name("recur")
-             .short("r")
-             .long("rec")
-             .required(false)
-             .help("Set if you want to visit subdirectories recursively"))
+        .arg(
+            Arg::with_name("from_dir")
+                .help("Sets a source dir")
+                .required(true)
+                .index(1),
+        )
+        .arg(
+            Arg::with_name("to_dir")
+                .help("Sets target dir")
+                .required(true)
+                .index(2),
+        )
+        .arg(
+            Arg::with_name("extension")
+                .short("x")
+                .long("ext")
+                .multiple(true)
+                .required(false)
+                .value_name("EXT")
+                .help("Sets the extension(s) of files to copy"),
+        )
+        .arg(
+            Arg::with_name("recur")
+                .short("r")
+                .long("rec")
+                .required(false)
+                .help("Set if you want to visit subdirectories recursively"),
+        )
         .get_matches();
 
     let frm = matches.value_of("from_dir").unwrap();
@@ -54,11 +62,10 @@ pub fn parse_arguments() -> Config {
     let mut ext_set = HashSet::new();
     for item in ext_values {
         ext_set.insert(OsString::from(item));
-    };
+    }
 
     Config::new(frm.to_string(), to.to_string(), ext_set, rec)
 }
-
 
 pub fn run(config: Config, cp: bool) -> Result<()> {
     let dst = Path::new(&config.dst);
@@ -66,10 +73,15 @@ pub fn run(config: Config, cp: bool) -> Result<()> {
     if !dst.exists() {
         fs::create_dir(dst)?;
     } else if !dst.is_dir() {
-        return Err(io::Error::new(io::ErrorKind::InvalidInput,
-                                  format!("Destination {} already exists and is not a directory", Path::display(dst))));
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            format!(
+                "Destination {} already exists and is not a directory",
+                Path::display(dst)
+            ),
+        ));
     }
-    cp_or_mv(src, dst, &config.ext, config.rec,cp)?;
+    cp_or_mv(src, dst, &config.ext, config.rec, cp)?;
     Ok(())
 }
 

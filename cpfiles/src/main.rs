@@ -1,4 +1,4 @@
-extern crate common; 
+extern crate common;
 use std::process;
 
 fn main() {
@@ -7,6 +7,5 @@ fn main() {
         println!("There was an error: {}", e);
 
         process::exit(1)
-    }            
+    }
 }
-
